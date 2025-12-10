@@ -1,6 +1,7 @@
 import sys
 input = sys.stdin.readline
 
+# 최초 풀이
 def check(start, prev):
     if len(edges[start]) == 1:
         return False
@@ -9,18 +10,18 @@ def check(start, prev):
         if next_station == prev:
             continue
 
-        if cycle[next_station]:
+        if cycle[next_station] == 1:
             continue
 
-        if visited[next_station]:
+        if cycle[next_station] == -1:
             cycle[next_station] = 1
             cycle[start] = 1
             return True
 
-        visited[next_station] = 1
+        cycle[next_station] = -1
 
         if check(next_station, start):
-            if cycle[start]:
+            if cycle[start] == 1:
                 return False
             cycle[start] = 1
             return True
@@ -53,19 +54,16 @@ for i in range(1, N + 1):
     if len(edges[i]) > 2:
         cross.append(i)
 
-for station in cross:
-    if cycle[station]:
-        continue
-    visited = [0] * (N + 1)
-    visited[station] = 1
-    check(station, 0)
+if len(cross):
+    cycle[cross[0]] = -1
+    check(cross[0], 0)
 
-for station in cross:
-    if not cycle[station]:
-        continue
-    for next_station in edges[station]:
-        if cycle[next_station]:
+    for station in cross:
+        if cycle[station] != 1:
             continue
-        subway(next_station, station, 1)
+        for next_station in edges[station]:
+            if cycle[next_station] == 1:
+                continue
+            subway(next_station, station, 1)
 
 print(*answer[1:])
