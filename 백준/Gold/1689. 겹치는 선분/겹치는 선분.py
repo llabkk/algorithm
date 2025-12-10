@@ -1,21 +1,45 @@
 import sys
 input = sys.stdin.readline
 
-N = int(input())
-points = []
+from heapq import heappop, heappush
 
+N = int(input().strip())
+
+# N이 1이면 선분 하나 읽고 바로 1 출력
+if N == 1:
+    s, e = map(int, input().split())
+    print(1)
+    sys.exit(0)
+
+start = []
+end = []
 for _ in range(N):
     s, e = map(int, input().split())
-    points.append((s, 1))   # 시작점: +1
-    points.append((e, -1))  # 끝점: -1
+    heappush(start, s)
+    heappush(end, e)
 
-points.sort()  # 좌표 기준, 같은 좌표면 -1이 1보다 먼저 옴
+point = front = heappop(start)
+rear = heappop(end)
+answer = tmp = 0
 
-cnt = 0
-answer = 0
-for x, v in points:
-    cnt += v          # 현재 위치에서 겹치는 선분 개수
-    if cnt > answer:
-        answer = cnt  # 최대값 갱신
+while start or end:
+    while start and point == front:
+        tmp += 1
+        front = heappop(start)
+
+    if not start and point == front:
+        tmp += 1
+        front = 1000000001
+
+    while end and point == rear:
+        tmp -= 1
+        rear = heappop(end)
+
+    if not end and point == rear:
+        tmp -= 1
+        rear = 1000000001
+
+    point = min(front, rear)
+    answer = max(answer, tmp)
 
 print(answer)
