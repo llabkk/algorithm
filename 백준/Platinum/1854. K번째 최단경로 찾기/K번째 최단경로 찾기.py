@@ -12,12 +12,10 @@ def dijkstra():
             new_dist = dist + nxt_dist
 
             if len(answer[nxt]) == K:
-                origin = -heappop(answer[nxt])
-                if origin > new_dist:
+                if -answer[nxt][0] > new_dist:
+                    heappop(answer[nxt])
                     heappush(answer[nxt], -new_dist)
                     heappush(start, (new_dist, nxt))
-                else:
-                    heappush(answer[nxt], -origin)
             else:
                 heappush(answer[nxt], -new_dist)
                 heappush(start, (new_dist, nxt))
@@ -40,4 +38,4 @@ for i in range(1, 1 + N):
     if len(answer[i]) < K:
         print(-1)
     else:
-        print(-heappop(answer[i]))
+        print(-answer[i][0])
