@@ -1,5 +1,8 @@
+import sys
+input = sys.stdin.readline
+
 while True:
-    sentence = input()
+    sentence = input().rstrip('\n')
     if sentence == '.':
         break
     
