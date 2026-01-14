@@ -35,4 +35,5 @@ def bfs(start, end):
 
     return -1
 
-print(bfs(a, b))
+answer = bfs(a, b)
+print(answer)
