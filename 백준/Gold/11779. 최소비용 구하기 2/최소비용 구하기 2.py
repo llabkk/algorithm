@@ -3,30 +3,34 @@ input = sys.stdin.readline
 
 from heapq import heappop, heappush
 
-from copy import deepcopy
-
 INF = float("inf")
 
-def dijkstra(start):
-    dists = [(INF, 0)] * (n + 1)
-    dists[start] = (0, [start])
+def dijkstra(start, end):
+    dists = [INF] * (n + 1)
+    dists[start] = 0
+
+    adj = [[] for _ in range(n + 1)]
+    adj[start] = [start]
+
     pq = [(0, start)]
 
     while pq:
         dist, node = heappop(pq)
 
-        if dists[node][0] < dist:
+        if dists[node] < dist:
             continue
 
         for nxt, ndist in edges[node]:
             pdist = dist + ndist
-            if dists[nxt][0] <= pdist:
+            if dists[nxt] <= pdist:
                 continue
             heappush(pq, (pdist, nxt))
-            tmp = deepcopy(dists[node][1])
+            tmp = adj[node][:]
             tmp.append(nxt)
-            dists[nxt] = (pdist, tmp)
-    return dists
+            adj[nxt] = tmp
+            dists[nxt] = pdist
+    
+    return dists[end], len(adj[end]), adj[end]
 
 n = int(input().strip())
 m = int(input().strip())
@@ -39,8 +43,8 @@ for _ in range(m):
 
 enter, goal = map(int, input().split())
 
-answer = dijkstra(enter)
+answer = dijkstra(enter, goal)
 
-print(answer[goal][0])
-print(len(answer[goal][1]))
-print(*answer[goal][1])
+print(answer[0])
+print(answer[1])
+print(*answer[2])
