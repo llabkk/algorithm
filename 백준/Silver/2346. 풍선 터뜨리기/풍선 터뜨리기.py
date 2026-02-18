@@ -5,32 +5,18 @@ from collections import deque
 
 n = int(input().strip())
 
-balloon = deque(map(int, input().split()))
-idx = deque(range(n))
+balloon = list(map(int, input().split()))
+que = deque((i + 1, balloon[i]) for i in range(n))
 
 answer = []
 
-while True:
-    cnt = balloon.popleft()
-    answer.append(idx.popleft() + 1)
-
-    if not balloon:
-        break
-
-    if cnt > 0:
-        for i in range(cnt - 1):
-            tmp = balloon.popleft()
-            balloon.append(tmp)
-
-            tmp2 = idx.popleft()
-            idx.append(tmp2)
-
+for _ in range(n):
+    idx, b = que.popleft()
+    answer.append(idx)
+    
+    if b > 0:
+        que.rotate(-b + 1)
     else:
-        for i in range(-cnt):
-            tmp = balloon.pop()
-            balloon.appendleft(tmp)
-
-            tmp2 = idx.pop()
-            idx.appendleft(tmp2)
+        que.rotate(-b)
 
 print(*answer)
