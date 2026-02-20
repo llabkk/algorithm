@@ -1,14 +1,28 @@
 import sys
 input = sys.stdin.readline
 
+from collections import deque
+
 n = int(input().strip())
 
-dp = [0] * (n + 1)
-for i in range(2, n + 1):
-    dp[i] = dp[i - 1] + 1
-    if i % 2 == 0:
-        dp[i] = min(dp[i], dp[i // 2] + 1)
-    if i % 3 == 0:
-        dp[i] = min(dp[i], dp[i // 3] + 1)
+visited = [0] * (n + 1)
 
-print(dp[n])
+que = deque([(n, 0)])
+
+while que:
+    num, answer = que.popleft()
+
+    if num == 1:
+        print(answer)
+        break
+
+    if num % 3 == 0 and not visited[num // 3]:
+        visited[num // 3] = 1
+        que.append((num // 3, answer + 1))
+    
+    if num % 2 == 0 and not visited[num // 2]:
+        visited[num // 2] = 1
+        que.append((num // 2, answer + 1))
+    if not visited[num - 1]:
+        visited[num - 1] = 1
+        que.append((num - 1, answer + 1))
