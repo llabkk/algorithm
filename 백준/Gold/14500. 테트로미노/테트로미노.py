@@ -2,72 +2,42 @@ import sys
 input = sys.stdin.readline
 
 n, m = map(int, input().split())
-paper = [list(map(int, input().split())) for _ in range(n)]
+
+paper = []
+max_value = 0
+for _ in range(n):
+    row = list(map(int, input().split()))
+    max_value = max(max_value, max(row))
+    paper.append(row)
 
 answer = 4
 
+delta = ((0, 1), (0, -1), (1, 0), (-1, 0))
+
+def dfs(block, ans, depth):
+    global answer
+
+    if answer >= ans + max_value * (4 - depth):
+        return
+    
+    if depth == 4:
+        answer = max(answer, ans)
+        return
+    for r, c in block:
+        for dr, dc in delta:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < n and 0 <= nc < m:
+                if visited[nr][nc]:
+                    continue
+                visited[nr][nc] = 1
+                dfs(block + [(nr, nc)], ans + paper[nr][nc], depth + 1)
+                visited[nr][nc] = 0
+    
+visited = [[0] * m for _ in range(n)]
+
 for i in range(n):
     for j in range(m):
-        # I
-        if i + 3 < n:
-            tmp = paper[i][j] + paper[i + 1][j] + paper[i + 2][j] + paper[i + 3][j]
-            answer = max(answer,tmp)
-        if j + 3 < m:
-            tmp = paper[i][j] + paper[i][j + 1] + paper[i][j + 2] + paper[i][j + 3]
-            answer = max(answer, tmp)
-        # ㅁ
-        if i + 1 < n and j + 1 < m:
-            tmp = paper[i][j] + paper[i + 1][j] + paper[i][j + 1] + paper[i + 1][j + 1]
-            answer = max(answer, tmp)
-        # ㅗ
-        if i - 1 >= 0 and j - 1 >= 0 and j + 1 < m:
-            tmp = paper[i][j] + paper[i - 1][j - 1] + paper[i - 1][j] + paper[i - 1][j + 1]
-            answer = max(answer, tmp)
-        if i + 1 < n and j - 1 >= 0 and j + 1 < m:
-            tmp = paper[i][j] + paper[i + 1][j - 1] + paper[i + 1][j] + paper[i + 1][j + 1]
-            answer = max(answer, tmp)
-        if j - 1 >= 0 and i - 1 >= 0 and i + 1 < n:
-            tmp = paper[i][j] + paper[i - 1][j - 1] + paper[i][j - 1] + paper[i + 1][j - 1]
-            answer = max(answer, tmp)
-        if j + 1 < m and i - 1 >= 0 and i + 1 < n:
-            tmp = paper[i][j] + paper[i - 1][j + 1] + paper[i][j + 1] + paper[i + 1][j + 1]
-            answer = max(answer, tmp)
-        # z
-        if i + 2 < n and j + 1 < m:
-            tmp = paper[i][j] + paper[i + 1][j] + paper[i + 1][j + 1] + paper[i + 2][j + 1]
-            answer = max(answer, tmp)
-        if i + 1 < n and j + 2 < m:
-            tmp = paper[i][j] + paper[i][j + 1] + paper[i + 1][j + 1] + paper[i + 1][j + 2]
-            answer = max(answer, tmp)
-        if i + 2 < n and j - 1 >= 0:
-            tmp = paper[i][j] + paper[i + 1][j] + paper[i + 1][j - 1] + paper[i + 2][j - 1]
-            answer = max(answer, tmp)
-        if i - 1 >= 0 and j + 2 < m:
-            tmp = paper[i][j] + paper[i][j + 1] + paper[i - 1][j + 1] + paper[i - 1][j + 2]
-            answer = max(answer, tmp)
-        # L
-        if i + 1 < n and j + 2 < m:
-            tmp = paper[i][j] + paper[i + 1][j] + paper[i + 1][j + 1] + paper[i + 1][j + 2]
-            answer = max(answer, tmp)
-        if i + 1 < n and j - 2 >= 0:
-            tmp = paper[i][j] + paper[i + 1][j] + paper[i + 1][j - 1] + paper[i + 1][j - 2]
-            answer = max(answer, tmp)
-        if i - 1 > 0 and j + 2 < m:
-            tmp = paper[i][j] + paper[i - 1][j] + paper[i - 1][j + 1] + paper[i - 1][j + 2]
-            answer = max(answer, tmp)
-        if i - 1 > 0 and j - 2 >= 0:
-            tmp = paper[i][j] + paper[i - 1][j] + paper[i - 1][j - 1] + paper[i - 1][j - 2]
-            answer = max(answer, tmp)
-        if j + 1 < m and i + 2 < n:
-            tmp = paper[i][j] + paper[i][j + 1] + paper[i + 1][j + 1] + paper[i + 2][j + 1]
-            answer = max(answer, tmp)
-        if j + 1 < m and i - 2 >= 0:
-            tmp = paper[i][j] + paper[i][j + 1] + paper[i - 1][j + 1] + paper[i - 2][j + 1]
-            answer = max(answer, tmp)
-        if j - 1 >= 0 and i + 2 < n:
-            tmp = paper[i][j] + paper[i][j - 1] + paper[i + 1][j - 1] + paper[i + 2][j - 1]
-            answer = max(answer, tmp)
-        if j - 1 >= 0 and i - 2 >= 0:
-            tmp = paper[i][j] + paper[i][j - 1] + paper[i - 1][j - 1] + paper[i - 2][j - 1]
-            answer = max(answer, tmp)
+        visited[i][j] = 1
+        dfs([(i, j)], paper[i][j], 1)
+
 print(answer)
